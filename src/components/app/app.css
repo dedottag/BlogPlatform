@@ -1,0 +1,23 @@
+body {
+  background-color: rgb(235, 238, 243);
+  margin: 0px;
+}
+
+.pagination {
+  margin: 20px 0 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.link {
+  text-decoration: none;
+}
+
+.app-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  /* background-color: brown; */
+}

@@ -8,9 +8,64 @@
   border-bottom-right-radius: 5px;
   box-shadow: 0px 5px 10px 0px rgba(69, 68, 68, 0.162);
   // background-color: red;
+  input {
+    border: 1px #d9d9d9 solid;
+    border-radius: 5px;
+  }
 }
 .one-article {
   padding: 20px;
   height: 560px;
   // background-color: blue;
+}
+.article-tittle {
+  overflow: hidden;
+  color: #1890ff;
+}
+.tittle-container {
+  width: auto;
+
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.article-tittle-container {
+  width: 200px;
+}
+
+.article-description {
+  width: 682px;
+}
+
+.article-description-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.buttons-container {
+  width: 155px;
+  display: flex;
+  justify-content: space-between;
+  button {
+    border-radius: 5px;
+    height: 31px;
+    background-color: #fff;
+    cursor: pointer;
+  }
+}
+
+.delete {
+  width: 78px;
+  border: 1px solid #f5222d;
+  color: #f5222d;
+}
+
+.edit {
+  width: 65px;
+  border: 1px solid #52c41a;
+  color: #52c41a;
 }

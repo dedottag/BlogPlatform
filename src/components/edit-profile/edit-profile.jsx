@@ -1,8 +1,9 @@
-import "./sign-up.scss";
-import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import "./edit-profile.scss";
 
-const SignUp = () => {
+const EditProfile = () => {
+  const token = JSON.parse(localStorage.getItem("token"))?.user.token;
+  const user = JSON.parse(localStorage.getItem("token"));
   const {
     handleSubmit,
     register,
@@ -15,27 +16,29 @@ const SignUp = () => {
 
   const onSubmit = (data) => {
     const user = {
-      user: {
-        username: data.username,
-        email: data.email,
-        password: data.password,
-      },
+      email: data.email,
+      username: data.username,
+      bio: data.password,
+      image: null,
     };
     console.log(JSON.stringify(user));
-    fetch("https://blog.kata.academy/api/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    fetch("https://blog.kata.academy/api/user", {
+      method: "PUT",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(user),
     })
       .then((data) => data.json())
       .then((data) => console.log(data))
       .catch((err) => console.log(err));
-    // reset();
+    reset();
   };
 
   return (
-    <div className="sign-up-container">
-      <h1>Create new account</h1>
+    <div className="edit-profile-container">
+      <h1>Edit Profile</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="user-information-container">
           <div className="name">
@@ -59,7 +62,7 @@ const SignUp = () => {
                       "You can only use lowercase English letters and numbers",
                   },
                 })}
-                placeholder="Username"
+                placeholder={user?.user.username}
               />
               <div style={{ fontSize: "15px" }}>
                 {errors?.username && (
@@ -80,7 +83,7 @@ const SignUp = () => {
                     message: "Invalid email address",
                   },
                 })}
-                placeholder="Email adress"
+                placeholder={user?.user.email}
               />
               <div style={{ fontSize: "15px" }}>
                 {errors?.email && (
@@ -91,7 +94,7 @@ const SignUp = () => {
           </div>
           <div className="password">
             <label className="label">
-              Password
+              New password
               <input
                 className="user-password"
                 {...register("password", {
@@ -105,7 +108,7 @@ const SignUp = () => {
                     message: "Максимум 40 символов",
                   },
                 })}
-                placeholder="Password"
+                placeholder="New password"
               />
               <div style={{ fontSize: "15px" }}>
                 {errors?.password && (
@@ -116,46 +119,22 @@ const SignUp = () => {
           </div>
           <div className="repeat">
             <label className="label">
-              Repeat password
+              Avatar image (url)
               <input
-                className="user-repeat-password"
-                {...register("passwordRepeat", {
-                  required: "Поле должно быть обязательным",
-                  validate: (val) => {
-                    if (watch("password") !== val) {
-                      return "Your passwords do no match";
-                    }
-                  },
-                })}
-                placeholder="Repeat password"
+                className="user-avatar"
+                type="img"
+                placeholder="Avatar image"
+                {...register("image")}
               />
-              <div style={{ fontSize: "15px" }}>
-                {errors?.passwordRepeat && (
-                  <span>{errors?.passwordRepeat?.message || "error"}</span>
-                )}
-              </div>
             </label>
-          </div>
-        </div>
-        <div className="agree-container">
-          <div className="agree-text-container">
-            <input
-              type="checkbox"
-              {...register("checkbox", {})}
-              required="lnlnl"
-            />
-            <span>I agree to the processing of my personal information</span>
           </div>
         </div>
         <div className="create-button-container">
           <button className="create-button">Create</button>
-          <span>
-            Already have an account? <Link to="/sign-in">Sign In</Link>.
-          </span>
         </div>
       </form>
     </div>
   );
 };
 
-export default SignUp;
+export default EditProfile;

@@ -1,0 +1,106 @@
+.new-article-container {
+  width: 938px;
+  //   height: 701px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0px 5px 10px 0px rgba(69, 68, 68, 0.162);
+  margin-top: 20px;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  //   align-items: center;
+  flex-wrap: wrap;
+  input {
+    border: 1px #d9d9d9 solid;
+    border-radius: 5px;
+  }
+}
+
+.inputs-container {
+  width: 874px;
+  input {
+    margin-bottom: 10px;
+    margin-top: 3px;
+    width: 874px;
+  }
+}
+
+.input-title {
+  height: 40px;
+}
+
+.input-short-description {
+  height: 40px;
+}
+
+.input-text {
+  height: 168px;
+}
+
+.tags-container {
+  width: 874px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.text-tag {
+  width: 874px;
+}
+.input-tag-container {
+  width: 600px;
+  //   height: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  //   margin-top: 10px;
+  margin-bottom: 10px;
+  //   background-color: #ee2626;
+  input {
+    border-radius: 5px;
+    width: 300px;
+    height: 40px;
+  }
+  button {
+    border-radius: 5px;
+    margin-left: 15px;
+    height: 40px;
+    width: 118px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.delete-button {
+  color: #f5222d;
+  border: 1px solid #f5222d;
+}
+
+.add-button {
+  color: #1890ff;
+  border: 1px solid #1890ff;
+}
+
+.send-button-container {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  button {
+    width: 319px;
+    height: 40px;
+    background-color: #1890ff;
+    color: #fff;
+    border-radius: 5px;
+    border: none;
+  }
+}
+
+h1 {
+  margin-top: 40px;
+  margin-bottom: 10px;
+  height: 40px;
+}
+
+.label {
+  margin-bottom: 5px;
+}

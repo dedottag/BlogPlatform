@@ -1,13 +1,13 @@
 import { useSelector } from "react-redux";
 import "./articles-list.css";
 import { format, addYears } from "date-fns";
-import { HeartOutlined } from "@ant-design/icons";
+import { HeartFilled, HeartOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
-import { getOneArticle } from "../store/articleReduser";
+import { getOneArticle, pageSize, getLoading } from "../store/articleReduser";
 import { Pagination } from "antd";
 import { Link } from "react-router-dom";
-
-let keys = 0;
+import { useEffect } from "react";
+import Spinner from "../spinner";
 
 export function dateFormatting(data) {
   if (data === "") {
@@ -26,6 +26,7 @@ export function koncut(text, limit) {
 }
 
 export function tagsReturn(tagList) {
+  let keys = 0;
   return (
     <div className="tags">
       {tagList.map((tag) => (
@@ -40,7 +41,28 @@ export function tagsReturn(tagList) {
 const ArticlesList = () => {
   const dispatch = useDispatch();
   const articles = useSelector((state) => state.articles.articles);
-  let key = 0;
+  console.log(articles.map((ar) => ar.favorited));
+  const loading = useSelector((state) => state.articles.loading);
+  // console.log(articles);
+  const token = JSON.parse(localStorage.getItem("token"))?.user.token;
+
+  useEffect(() => {
+    if (articles.length) {
+      dispatch(getLoading(false));
+    }
+  });
+
+  const favoriteArticle = (slug) => {
+    fetch(`https://blog.kata.academy/api/articles/${slug}/favorite`, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    })
+      .then((data) => data.json())
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
+  };
 
   function getArticle(link) {
     fetch(`https://blog.kata.academy/api/articles/${link}`)
@@ -48,13 +70,15 @@ const ArticlesList = () => {
       // .then((res) => console.log(res));
       .then((res) => dispatch(getOneArticle(res)));
   }
-
+  if (loading) {
+    return <Spinner />;
+  }
   return (
     <div className="articles-list-container">
       {articles.map((article) => (
         <div
           className="article"
-          key={key++}
+          key={article.slug}
           onClick={() => {
             getArticle(article.slug);
           }}
@@ -69,8 +93,16 @@ const ArticlesList = () => {
                     </span>
                   </div>
                 </Link>
-                <div className="favotite-count">
-                  <HeartOutlined />
+                <div
+                  className="favotite-count"
+                  onClick={() => {
+                    favoriteArticle(article.slug);
+                  }}
+                >
+                  {article.favorited && (
+                    <HeartFilled style={{ color: "#FF0707" }} />
+                  )}
+                  {!article.favorited && <HeartOutlined />}
                   <span>{article.favoritesCount}</span>
                 </div>
               </div>
@@ -98,7 +130,14 @@ const ArticlesList = () => {
         </div>
       ))}
 
-      <Pagination className="pagination" total={5} pageSize={1} />
+      <Pagination
+        className="pagination"
+        total={5}
+        pageSize={1}
+        onChange={(page) => {
+          dispatch(pageSize(page));
+        }}
+      />
     </div>
   );
 };

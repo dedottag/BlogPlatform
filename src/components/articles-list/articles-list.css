@@ -34,11 +34,13 @@
 
 .tittle {
   width: 150px;
-  height: 20px;
+  height: auto;
+  overflow: hidden;
 }
 
 .favotite-count span {
   margin-left: 5px;
+  cursor: pointer;
 }
 
 .author-info-container {
@@ -95,4 +97,5 @@
 
 .author-user-name {
   width: 81px;
+  overflow: hidden;
 }

@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { getRedirect } from "../store/articleReduser";
 
 const SignIn = () => {
-  const token = localStorage.getItem("token");
+  //   const token = localStorage.getItem("token");
   const redirect = useSelector((state) => state.articles.redirect);
-  console.log(redirect);
+  //   console.log(redirect);
   const dispatch = useDispatch();
 
   const {
@@ -19,25 +19,28 @@ const SignIn = () => {
     mode: "onBlur",
   });
 
-  const onSubmit = (data) => {
+  async function getLogin(data) {
     const user = {
       user: {
         email: data.email,
         password: data.password,
       },
     };
-    // console.log(JSON.stringify(user));
-    fetch("https://blog.kata.academy/api/users/login", {
+    let result = await fetch("https://blog.kata.academy/api/users/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
-    })
-      .then((data) => data.json())
-      .then((data) => localStorage.setItem("token", JSON.stringify(data)))
-      .then(dispatch(getRedirect(true)))
-      .catch((err) => console.log(err));
-    reset();
-  };
+    });
+    if (!result.ok) {
+      result = await result.json();
+      console.log(result);
+    }
+    if (result.ok) {
+      data = await result.json().catch((err) => console.log(err));
+      localStorage.setItem("token", JSON.stringify(data));
+      return dispatch(getRedirect(true));
+    }
+  }
 
   if (redirect) {
     return <Redirect to={"/articlesList"} />;
@@ -45,7 +48,7 @@ const SignIn = () => {
   return (
     <div className="sign-in-container">
       <h1>Sign in</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(getLogin)}>
         <div className="login-details-ocntainer">
           <div className="email-container">
             <label className="label">

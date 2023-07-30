@@ -15,12 +15,7 @@ const NewArticle = () => {
   const redirect = useSelector((state) => state.articles.redirect);
   // console.log(redirect);
 
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    reset,
-  } = useForm({
+  const { handleSubmit, register, reset } = useForm({
     mode: "onBlur",
   });
 
@@ -30,21 +25,22 @@ const NewArticle = () => {
         title: data.title,
         description: data.description,
         body: data.text,
-        tags: [data.tag, data.tags],
+        tagsList: ["tag1", "2"],
+        token: token,
       },
     };
-    // console.log(user);
-    // console.log(JSON.stringify(user));
+    console.log(user);
+    console.log(JSON.stringify(user));
     fetch("https://blog.kata.academy/api/articles", {
       method: "POST",
       headers: {
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(user),
     })
       .then((data) => data.json())
-      .then((data) => console.log(data))
+      // .then((data) => console.log(data))
       .then(dispatch(getRedirect(true)))
       .catch((err) => console.log(err));
     reset();
@@ -53,7 +49,6 @@ const NewArticle = () => {
   const Tags = () => {
     const handleRemoveItem = (idx) => {
       const temp = [...inputs];
-
       temp.splice(idx, 1);
       setInputs(temp);
     };

@@ -7,6 +7,7 @@ import SignIn from "../sign-in";
 import Header from "../header";
 import NewArticle from "../new-article";
 import EditProfile from "../edit-profile";
+import EditArticle from "../edit-article";
 
 import Article from "../one-article";
 import { BrowserRouter as Router, Route } from "react-router-dom";
@@ -18,7 +19,7 @@ const App = () => {
   // console.log(pageNumber);
 
   const getArticleFetch = () => {
-    fetch(`https://blog.kata.academy/api/articles?page=${pageNumber}/`)
+    fetch(`https://blog.kata.academy/api/articles?&offset=${pageNumber}`)
       .then((res) => res.json())
       // .then((res) => console.log(res))
       .then((res) => dispatch((res = getArticleAction(res))));
@@ -26,18 +27,23 @@ const App = () => {
 
   useEffect(() => {
     getArticleFetch();
-  }, []);
+  });
 
   return (
     <Router>
       <div className="app-container">
         <Header />
+        <Route path="/edit-article" component={EditArticle}></Route>
         <Route path="/edit-profile" component={EditProfile}></Route>
         <Route path="/new-article" component={NewArticle}></Route>
         <Route path="/sign-in" component={SignIn}></Route>
         <Route path="/sign-up" component={SignUp}></Route>
         <Route path="/article" component={Article}></Route>
-        <Route path="/articlesList" component={ArticlesList}></Route>
+        <Route
+          path="/articlesList"
+          exact
+          render={() => <ArticlesList />}
+        ></Route>
       </div>
     </Router>
   );

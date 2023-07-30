@@ -1,45 +1,58 @@
 import { useForm } from "react-hook-form";
 import "./edit-profile.scss";
+import { useDispatch, useSelector } from "react-redux";
+import { getRedirect } from "../store/articleReduser";
+import { Redirect } from "react-router-dom";
 
 const EditProfile = () => {
   const token = JSON.parse(localStorage.getItem("token"))?.user.token;
   const user = JSON.parse(localStorage.getItem("token"));
+  const redirect = useSelector((state) => state.articles.redirect);
+  const dispatch = useDispatch();
   const {
     handleSubmit,
     register,
     formState: { errors },
     reset,
-    watch,
   } = useForm({
     mode: "onBlur",
   });
 
-  const onSubmit = (data) => {
+  async function editProfile(data) {
     const user = {
+      password: data.password,
       email: data.email,
+      token: token,
       username: data.username,
-      bio: data.password,
-      image: null,
+      image: data.image,
     };
     console.log(JSON.stringify(user));
-    fetch("https://blog.kata.academy/api/user", {
+    let result = await fetch("https://blog.kata.academy/api/user", {
       method: "PUT",
       headers: {
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(user),
-    })
-      .then((data) => data.json())
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err));
-    reset();
-  };
+    });
+    if (!result.ok) {
+      result = await result.json();
+      console.log(result);
+    }
+    if (result.ok) {
+      data = await result.json();
+      console.log(data);
+      return dispatch(getRedirect(true));
+    }
+  }
 
+  if (redirect) {
+    return <Redirect to={"/articlesList"} />;
+  }
   return (
     <div className="edit-profile-container">
       <h1>Edit Profile</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(editProfile)}>
         <div className="user-information-container">
           <div className="name">
             <label className="label">

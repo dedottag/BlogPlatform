@@ -37,15 +37,16 @@ export function tagsReturn(tagList) {
     </div>
   );
 }
-
+// localStorage.clear();
 const ArticlesList = () => {
   const dispatch = useDispatch();
   const articles = useSelector((state) => state.articles.articles);
-  console.log(articles.map((ar) => ar.favorited));
+  // console.log(articles.map((ar) => ar.favorited));
   const loading = useSelector((state) => state.articles.loading);
   // console.log(articles);
   const token = JSON.parse(localStorage.getItem("token"))?.user.token;
 
+  let key = 1;
   useEffect(() => {
     if (articles.length) {
       dispatch(getLoading(false));
@@ -78,7 +79,7 @@ const ArticlesList = () => {
       {articles.map((article) => (
         <div
           className="article"
-          key={article.slug}
+          key={key++}
           onClick={() => {
             getArticle(article.slug);
           }}

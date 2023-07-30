@@ -1,19 +1,23 @@
 import "./sign-up.scss";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { getRedirect } from "../store/articleReduser";
 
 const SignUp = () => {
+  const redirect = useSelector((state) => state.articles.redirect);
+  //   console.log(redirect);
+  const dispatch = useDispatch();
   const {
     handleSubmit,
     register,
     formState: { errors },
-    reset,
     watch,
   } = useForm({
     mode: "onBlur",
   });
 
-  const onSubmit = (data) => {
+  async function signUp(data) {
     const user = {
       user: {
         username: data.username,
@@ -21,22 +25,28 @@ const SignUp = () => {
         password: data.password,
       },
     };
-    console.log(JSON.stringify(user));
-    fetch("https://blog.kata.academy/api/users", {
+    let result = await fetch("https://blog.kata.academy/api/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
-    })
-      .then((data) => data.json())
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err));
-    // reset();
-  };
-
+    });
+    if (!result.ok) {
+      result = await result.json();
+      console.log(result);
+    }
+    if (result.ok) {
+      data = await result.json().catch((err) => console.log(err));
+      localStorage.setItem("token", JSON.stringify(data));
+      return dispatch(getRedirect(true));
+    }
+  }
+  if (redirect) {
+    return <Redirect to={"/articlesList"} />;
+  }
   return (
     <div className="sign-up-container">
       <h1>Create new account</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(signUp)}>
         <div className="user-information-container">
           <div className="name">
             <label className="label">

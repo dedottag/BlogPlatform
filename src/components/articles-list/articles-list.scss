@@ -19,7 +19,6 @@
 }
 
 .tittle-container {
-  width: 200px;
   display: flex;
   justify-content: space-between;
   font-size: 20px;
@@ -27,13 +26,15 @@
 }
 
 .article-tittle {
-  width: 160px;
+  /* width: 160px; */
   color: #1890ff;
   font-family: Inter;
 }
 
 .tittle {
-  width: 150px;
+  /* width: 150px; */
+  min-width: 20px;
+  height: 28px;
   height: auto;
   overflow: hidden;
 }
@@ -47,13 +48,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 141px;
+  width: 170px;
   /* background-color: blue; */
 }
 
 .author-info {
   display: flex;
-  width: 90px;
+  width: 100px;
   height: 46px;
 }
 
@@ -65,6 +66,7 @@
 
 .create-date {
   color: #00000080;
+  width: 120px;
 }
 
 .article-body {
@@ -98,4 +100,21 @@
 .author-user-name {
   width: 81px;
   overflow: hidden;
+}
+
+.like-box {
+  margin: 0 0 0 13px;
+  width: 16px;
+  height: 16px;
+  background-image: url(./noLike.png);
+}
+
+.article-like:checked + .like-box {
+  background: url(./Like.png) no-repeat center;
+}
+
+.favotite-count {
+  width: 160px;
+  display: flex;
+  align-items: center;
 }

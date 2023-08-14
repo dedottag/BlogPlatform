@@ -1,5 +1,7 @@
 import { useSelector } from "react-redux";
-import "./articles-list.css";
+import Like from "./Like.png";
+import NoLike from "./noLike.png";
+import "./articles-list.scss";
 import { format, addYears } from "date-fns";
 import { HeartFilled, HeartOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
@@ -8,6 +10,8 @@ import { Pagination } from "antd";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import Spinner from "../spinner";
+import { getArticles } from "../app/app";
+const token = JSON.parse(localStorage.getItem("token"))?.user.token;
 
 export function dateFormatting(data) {
   if (data === "") {
@@ -37,40 +41,62 @@ export function tagsReturn(tagList) {
     </div>
   );
 }
-// localStorage.clear();
+
+export async function unFavorite(slug) {
+  return await fetch(
+    `https://blog.kata.academy/api/articles/${slug}/favorite`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    }
+  );
+  // const data = await result.json();
+  // console.log(data);
+}
+
+export async function favoriteArticle(slug) {
+  return await fetch(
+    `https://blog.kata.academy/api/articles/${slug}/favorite`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    }
+  );
+  // const data = await result.json();
+  // console.log(data);
+}
+
 const ArticlesList = () => {
   const dispatch = useDispatch();
   const articles = useSelector((state) => state.articles.articles);
   // console.log(articles.map((ar) => ar.favorited));
   const loading = useSelector((state) => state.articles.loading);
   // console.log(articles);
-  const token = JSON.parse(localStorage.getItem("token"))?.user.token;
+  const pageNumber = useSelector((state) => state.articles.pageSize);
 
-  let key = 1;
   useEffect(() => {
     if (articles.length) {
       dispatch(getLoading(false));
     }
   });
 
-  const favoriteArticle = (slug) => {
-    fetch(`https://blog.kata.academy/api/articles/${slug}/favorite`, {
-      method: "POST",
+  function getArticle(link) {
+    fetch(`https://blog.kata.academy/api/articles/${link}`, {
       headers: {
-        Authorization: `Token ${token}`,
+        "Content-Type": "application/json;charset=utf-8",
+        Authorization: `Bearer ${token}`,
       },
     })
-      .then((data) => data.json())
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err));
-  };
-
-  function getArticle(link) {
-    fetch(`https://blog.kata.academy/api/articles/${link}`)
       .then((res) => res.json())
       // .then((res) => console.log(res));
-      .then((res) => dispatch(getOneArticle(res)));
+      .then((res) => dispatch(getOneArticle(res)))
+      .then((data) => localStorage.setItem("oneArticle", JSON.stringify(data)));
   }
+
   if (loading) {
     return <Spinner />;
   }
@@ -79,7 +105,7 @@ const ArticlesList = () => {
       {articles.map((article) => (
         <div
           className="article"
-          key={key++}
+          key={article.slug}
           onClick={() => {
             getArticle(article.slug);
           }}
@@ -89,21 +115,41 @@ const ArticlesList = () => {
               <div className="tittle-container">
                 <Link className="link" to="/article">
                   <div className="tittle">
-                    <span className="article-tittle">
-                      {koncut(article.title, 10)}
-                    </span>
+                    <span className="article-tittle">{article.title}</span>
                   </div>
                 </Link>
                 <div
                   className="favotite-count"
                   onClick={() => {
-                    favoriteArticle(article.slug);
+                    article.favorited
+                      ? unFavorite(article.slug).then(() =>
+                          window.location.reload()
+                        )
+                      : favoriteArticle(article.slug).then(() =>
+                          window.location.reload()
+                        );
                   }}
                 >
+                  {/* <input
+                    className="article-like"
+                    type="checkbox"
+                    disabled={false}
+                    // checked={article.favorited}
+                    onChange={() => {
+                      if (!article.favorited) {
+                        favoriteArticle(article.slug);
+                      }
+                      if (article.favorited) {
+                        unFavorite(article.slug);
+                      }
+                    }}
+                  /> */}
+                  {/* <div className="like-box"></div> */}
                   {article.favorited && (
                     <HeartFilled style={{ color: "#FF0707" }} />
                   )}
                   {!article.favorited && <HeartOutlined />}
+
                   <span>{article.favoritesCount}</span>
                 </div>
               </div>
@@ -133,10 +179,13 @@ const ArticlesList = () => {
 
       <Pagination
         className="pagination"
-        total={5}
+        page={pageNumber / 5 + 1}
         pageSize={1}
-        onChange={(page) => {
-          dispatch(pageSize(page));
+        total={10}
+        shape="rounded"
+        onChange={(num) => {
+          dispatch(pageSize((num - 1) * 5));
+          console.log(pageNumber);
         }}
       />
     </div>

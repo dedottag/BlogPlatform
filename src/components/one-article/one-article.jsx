@@ -1,5 +1,6 @@
 // import { useState, useEffect } from "react";
-import { HeartOutlined } from "@ant-design/icons";
+import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
@@ -12,14 +13,21 @@ import {
 import classes from "./one-article.module.scss";
 import Spinner from "../spinner";
 import { useDispatch } from "react-redux";
-import { getLoading } from "../store/articleReduser";
+import { getLoading, addTags } from "../store/articleReduser";
+import { unFavorite, favoriteArticle } from "../articles-list/artcles-list";
+
+const token = JSON.parse(localStorage.getItem("token"))?.user.token;
+const articl = [
+  JSON.parse(localStorage.getItem("oneArticle"))?.payload.article,
+];
+// const article = articl || [];
+// console.log(article);
 
 const Article = () => {
   const user = JSON.parse(localStorage.getItem("token"))?.user.username;
-  const token = JSON.parse(localStorage.getItem("token"))?.user.token;
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.articles.loading);
-
+  // const article = useSelector((state) => state.articles.oneArticle);
   useForm({
     mode: "onBlur",
   });
@@ -47,6 +55,7 @@ const Article = () => {
   // };
 
   const article = useSelector((state) => state.articles.oneArticle);
+  // console.log(article);
   let key = 0;
 
   useEffect(() => {
@@ -69,8 +78,18 @@ const Article = () => {
                   <span className={classes["article-tittle"]}>
                     {koncut(article.title, 10)}
                   </span>
-                  <div className="favotite-count">
-                    <HeartOutlined />
+                  <div
+                    className="favotite-count"
+                    onClick={() => {
+                      article.favorited
+                        ? unFavorite(article.slug)
+                        : favoriteArticle(article.slug);
+                    }}
+                  >
+                    {article.favorited && (
+                      <HeartFilled style={{ color: "#FF0707" }} />
+                    )}
+                    {!article.favorited && <HeartOutlined />}
                     <span>{article.favoritesCount}</span>
                   </div>
                 </div>
@@ -99,7 +118,7 @@ const Article = () => {
             </div>
             <div className={classes["article-description-container"]}>
               <div className={classes["article-description"]}>
-                {koncut(article.description, 50)}
+                {article.description}
               </div>
               {user === article.author.username && token && (
                 <div className={classes["buttons-container"]}>
@@ -107,19 +126,31 @@ const Article = () => {
                     <button
                       className={classes["delete"]}
                       onClick={() => {
-                        deleteArticle(article.slug);
+                        deleteArticle(article.slug).then(() =>
+                          window.location.reload()
+                        );
                       }}
                     >
                       Delete
                     </button>
                   </Link>
                   <Link to="/edit-article">
-                    <button className={classes["edit"]}>Edit</button>
+                    <button
+                      type="button"
+                      className={classes["edit"]}
+                      onClick={() => {
+                        dispatch(addTags(article.tagList));
+                      }}
+                    >
+                      Edit
+                    </button>
                   </Link>
                 </div>
               )}
             </div>
-            <div className="body">{article.body}</div>
+            <div className="body">
+              <ReactMarkdown>{article.body}</ReactMarkdown>
+            </div>
           </>
         </div>
       ))}

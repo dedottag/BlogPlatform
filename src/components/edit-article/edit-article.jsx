@@ -1,78 +1,46 @@
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { getRedirect } from "../store/articleReduser";
+import { addTag, addTaglist, dellTag } from "../store/articleReduser";
 
 const EditArticle = () => {
   const token = JSON.parse(localStorage.getItem("token"))?.user.token;
   const article = useSelector((state) => state.articles.oneArticle);
+  // const article = [
+  //   JSON.parse(localStorage.getItem("oneArticle")).payload.article,
+  // ];
   const slug = article[0]?.slug;
-  //   console.log(article);
+  // console.log(article[0]);
   const dispatch = useDispatch();
   const redirect = useSelector((state) => state.articles.redirect);
+  const tags = useSelector((state) => state.articles.tag);
+  const tagsList = useSelector((state) => state.articles.tagList);
+  // console.log(tagsList);
 
-  const [inputs, setInputs] = useState([]);
-  let val;
-  let key = 0;
+  function delTag(ind) {
+    const result = tagsList.filter((el, index) => {
+      return index !== ind;
+    });
+    dispatch(dellTag(result));
+  }
 
-  const Tags = () => {
-    const handleRemoveItem = (idx) => {
-      const temp = [...inputs];
-
-      temp.splice(idx, 1);
-      setInputs(temp);
-    };
-
-    return (
-      <div className="input-tag-container">
-        {inputs}
-        <input
-          className="input-tag"
-          placeholder="Text"
-          {...register("tags")}
-          onChange={(e) => {
-            val = e.target.value;
-          }}
-        />
-        <button className="delete-button" type="button">
-          Delete
-        </button>
+  const elements = () =>
+    tagsList.map((el, index) => (
+      <div className="input-tag-container" key={index}>
+        <input className="input-tag" value={el} />
         <button
-          className="add-button"
+          className="delete-button"
           type="button"
           onClick={() => {
-            if (val) {
-              setInputs([
-                <div className="input-tag-container" key={key++}>
-                  {[...inputs]}
-                  <input
-                    className="input-tag"
-                    placeholder="Text"
-                    {...register("tag")}
-                    onChange={(e) => {
-                      val = e.target.value;
-                    }}
-                  />
-                  <button
-                    className="delete-button"
-                    type="button"
-                    onClick={() => {
-                      handleRemoveItem(key);
-                    }}
-                  >
-                    Delete
-                  </button>
-                </div>,
-              ]);
-            }
+            delTag(index);
+            // console.log(index);
           }}
         >
-          Add tag
+          Delete
         </button>
       </div>
-    );
-  };
+    ));
 
   const { handleSubmit, register, reset } = useForm({
     mode: "onBlur",
@@ -84,6 +52,7 @@ const EditArticle = () => {
         title: data.title,
         description: data.description,
         body: data.text,
+        tagList: tagsList,
       },
     };
 
@@ -100,35 +69,11 @@ const EditArticle = () => {
       console.log(result);
     }
     if (result.ok) {
-      data = await result.json();
-      reset();
-      return dispatch(getRedirect(true));
+      dispatch(getRedirect(true));
+      data = await result.json().then(() => window.location.reload());
+      // reset();
     }
   }
-
-  // const editArticle = (data) => {
-  //   const user = {
-  //     article: {
-  //       title: data.title,
-  //       description: data.description,
-  //       body: data.text,
-  //     },
-  //   };
-  //   // console.log(JSON.stringify(user));
-  //   fetch(`https://blog.kata.academy/api/articles/${slug}`, {
-  //     method: "PUT",
-  //     headers: {
-  //       Authorization: `Token ${token}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(user),
-  //   })
-  //     .then((data) => data.json())
-  //     .then(dispatch(getRedirect(true)))
-  //     .then((data) => console.log(data))
-  //     .catch((err) => console.log(err));
-  //   reset();
-  // };
   if (redirect) {
     return <Redirect to="/articlesList" />;
   }
@@ -158,7 +103,7 @@ const EditArticle = () => {
             </label>
             <label>
               Text
-              <input
+              <textarea
                 className="input-text"
                 // placeholder="Text"
                 {...register("text")}
@@ -169,7 +114,29 @@ const EditArticle = () => {
           <div className="tags-container">
             <label>
               <div className="label">Tags</div>
-              <Tags />
+              <div className="input-tag-container">
+                <input
+                  className="input-tag"
+                  placeholder="Text"
+                  value={tags}
+                  onChange={(e) => {
+                    dispatch(addTag(e.target.value));
+                  }}
+                />
+                <button
+                  className="add-button"
+                  type="button"
+                  onClick={() => {
+                    if (tags.length) {
+                      dispatch(addTaglist(tags));
+                      dispatch(addTag(""));
+                    }
+                  }}
+                >
+                  Add tag
+                </button>
+                {elements()}
+              </div>
             </label>
           </div>
           <div className="send-button-container">

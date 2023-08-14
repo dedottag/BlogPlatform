@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getRedirect } from "../store/articleReduser";
+import image from "./i.webp";
 
 const LogOutHeader = () => {
   return (
@@ -33,7 +34,7 @@ const Header = () => {
           <div className="user-info-container">
             <div className="user-name">{user.user?.username}</div>
             <div className="user-avatar">
-              <img src={user.user?.image} alt="" />
+              <img src={user.user?.image || image} alt="" />
             </div>
           </div>
         </Link>
@@ -43,7 +44,7 @@ const Header = () => {
             const confirmBox = window.confirm("Вы действительно хотите выйти?");
             if (confirmBox === true) {
               dispatch(getRedirect(true));
-              localStorage.clear();
+              localStorage.removeItem("token");
               window.location.reload();
             }
           }}

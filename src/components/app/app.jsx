@@ -12,18 +12,42 @@ import EditArticle from "../edit-article";
 import Article from "../one-article";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import "./app.css";
+const token = JSON.parse(localStorage.getItem("token"))?.user.token;
+// localStorage.removeItem("oneArticle");
+
+export function getArticles() {
+  return (dispatch) => {
+    fetch(`https://blog.kata.academy/api/articles?limit=5&offset=0`, {
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => console.log(res))
+      .then((res) => dispatch((res = getArticleAction(res))));
+  };
+}
 
 const App = () => {
   const dispatch = useDispatch();
   const pageNumber = useSelector((state) => state.articles.pageSize);
   // console.log(pageNumber);
 
-  const getArticleFetch = () => {
-    fetch(`https://blog.kata.academy/api/articles?&offset=${pageNumber}`)
+  function getArticleFetch() {
+    fetch(
+      `https://blog.kata.academy/api/articles?limit=5&offset=${pageNumber}`,
+      {
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
       .then((res) => res.json())
       // .then((res) => console.log(res))
       .then((res) => dispatch((res = getArticleAction(res))));
-  };
+  }
 
   useEffect(() => {
     getArticleFetch();

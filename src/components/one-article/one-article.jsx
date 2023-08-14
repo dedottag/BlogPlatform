@@ -76,7 +76,7 @@ const Article = () => {
               <div className={classes["article-tittle-container"]}>
                 <div className={classes["tittle-container"]}>
                   <span className={classes["article-tittle"]}>
-                    {koncut(article.title, 10)}
+                    {article.title}
                   </span>
                   <div
                     className="favotite-count"

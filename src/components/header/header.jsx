@@ -1,8 +1,8 @@
 import "./header.scss";
 import { Link } from "react-router-dom";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getRedirect } from "../store/articleReduser";
+import { getRedirect, getOneArticleNull } from "../store/articleReduser";
 import image from "./i.webp";
 
 const LogOutHeader = () => {
@@ -22,7 +22,7 @@ const Header = () => {
   const user = JSON.parse(localStorage.getItem("token"));
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
-  const redirect = useSelector((state) => state.articles.redirect);
+  const redirect = useSelector((state) => state.articleReduser.redirect);
 
   const LogInHeader = () => {
     return (
@@ -56,12 +56,15 @@ const Header = () => {
   };
 
   if (redirect) {
-    <Redirect to="/articlesList" />;
+    <Navigate replace to="/:page" />;
   }
   return (
     <div className="header-container">
-      <Link className="link" to="/articlesList">
-        <div className="name-tittle">
+      <Link className="link" to={`/:page`}>
+        <div
+          className="name-tittle"
+          onClick={() => dispatch(getOneArticleNull())}
+        >
           <span>Realworld Blog</span>
         </div>
       </Link>

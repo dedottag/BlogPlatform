@@ -1,10 +1,10 @@
 .lds-spinner {
   color: official;
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-  margin-top: 270px;
+  display: flex;
+  width: 1000px;
+  height: 700px;
+  justify-content: center;
+  align-items: center;
 }
 .lds-spinner div {
   transform-origin: 40px 40px;

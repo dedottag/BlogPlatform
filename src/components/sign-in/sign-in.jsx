@@ -1,20 +1,17 @@
 import "./sign-in.scss";
-import { Link, Redirect } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { getRedirect } from "../store/articleReduser";
 
 const SignIn = () => {
-  //   const token = localStorage.getItem("token");
-  const redirect = useSelector((state) => state.articles.redirect);
-  //   console.log(redirect);
+  const redirect = useSelector((state) => state.articleReduser.redirect);
   const dispatch = useDispatch();
 
   const {
     handleSubmit,
     register,
     formState: { errors },
-    reset,
   } = useForm({
     mode: "onBlur",
   });
@@ -43,7 +40,7 @@ const SignIn = () => {
   }
 
   if (redirect) {
-    return <Redirect to={"/articlesList"} />;
+    return <Navigate replace to={"/:page"} />;
   }
   return (
     <div className="sign-in-container">

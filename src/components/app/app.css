@@ -1,6 +1,7 @@
 body {
   background-color: rgb(235, 238, 243);
   margin: 0px;
+  /* position: relative; */
 }
 
 .pagination {
@@ -15,9 +16,10 @@ body {
 }
 
 .app-container {
-  width: 100%;
+  width: 1000px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   /* background-color: brown; */
 }

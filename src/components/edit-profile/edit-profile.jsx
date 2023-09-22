@@ -1,57 +1,66 @@
-import { useForm } from "react-hook-form";
+// import { useForm } from "react-hook-form";
 import "./edit-profile.scss";
-import { useDispatch, useSelector } from "react-redux";
-import { getRedirect } from "../store/articleReduser";
-import { Redirect } from "react-router-dom";
+import { useSelector } from "react-redux";
+// import { getRedirect } from "../store/articleReduser";
+import { Link, Navigate } from "react-router-dom";
 
 const EditProfile = () => {
-  const token = JSON.parse(localStorage.getItem("token"))?.user.token;
-  const user = JSON.parse(localStorage.getItem("token"));
-  const redirect = useSelector((state) => state.articles.redirect);
-  const dispatch = useDispatch();
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    reset,
-  } = useForm({
-    mode: "onBlur",
-  });
+  // const token = JSON.parse(localStorage.getItem("token"))?.user.token;
+  // const user = JSON.parse(localStorage.getItem("token"));
+  const redirect = useSelector((state) => state.articleReduser.redirect);
+  // const dispatch = useDispatch();
+  // const {
+  //   handleSubmit,
+  //   register,
+  //   formState: { errors },
+  //   reset,
+  // } = useForm({
+  //   mode: "onBlur",
+  // });
 
-  async function editProfile(data) {
-    const user = {
-      password: data.password,
-      email: data.email,
-      token: token,
-      username: data.username,
-      image: data.image,
-    };
-    console.log(JSON.stringify(user));
-    let result = await fetch("https://blog.kata.academy/api/user", {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    });
-    if (!result.ok) {
-      result = await result.json();
-      console.log(result);
-    }
-    if (result.ok) {
-      data = await result.json();
-      console.log(data);
-      return dispatch(getRedirect(true));
-    }
-  }
+  // async function editProfile(data) {
+  //   const user = {
+  //     password: data.password,
+  //     email: data.email,
+  //     token: token,
+  //     username: data.username,
+  //     image: data.image,
+  //   };
+  //   console.log(JSON.stringify(user));
+  //   let result = await fetch("https://blog.kata.academy/api/user", {
+  //     method: "PUT",
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(user),
+  //   });
+  //   if (!result.ok) {
+  //     result = await result.json();
+  //     console.log(result);
+  //   }
+  //   if (result.ok) {
+  //     data = await result.json();
+  //     console.log(data);
+  //     return dispatch(getRedirect(true));
+  //   }
+  // }
 
   if (redirect) {
-    return <Redirect to={"/articlesList"} />;
+    return <Navigate reaplace to={"/:page"} />;
   }
   return (
     <div className="edit-profile-container">
-      <h1>Edit Profile</h1>
+      <h1 style={{ color: "#00000080" }}>Edit Profile</h1>
+      <h2 style={{ textAlign: "center" }}>
+        {"К сожалению эта функция не работает ("}
+      </h2>
+      <Link style={{ textDecoration: "none" }} to="/:page">
+        <div className="create-button-container">
+          <button className="create-button">Вернуться назад</button>
+        </div>
+      </Link>
+      {/* <h1>Edit Profile</h1>
       <form onSubmit={handleSubmit(editProfile)}>
         <div className="user-information-container">
           <div className="name">
@@ -145,7 +154,7 @@ const EditProfile = () => {
         <div className="create-button-container">
           <button className="create-button">Create</button>
         </div>
-      </form>
+      </form> */}
     </div>
   );
 };

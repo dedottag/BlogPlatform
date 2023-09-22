@@ -1,12 +1,11 @@
 import "./sign-up.scss";
-import { Link, Redirect } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { getRedirect } from "../store/articleReduser";
 
 const SignUp = () => {
-  const redirect = useSelector((state) => state.articles.redirect);
-  //   console.log(redirect);
+  const redirect = useSelector((state) => state.articleReduser.redirect);
   const dispatch = useDispatch();
   const {
     handleSubmit,
@@ -41,7 +40,7 @@ const SignUp = () => {
     }
   }
   if (redirect) {
-    return <Redirect to={"/articlesList"} />;
+    return <Navigate replace to={"/:page"} />;
   }
   return (
     <div className="sign-up-container">

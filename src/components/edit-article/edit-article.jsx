@@ -1,22 +1,17 @@
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { getRedirect } from "../store/articleReduser";
 import { addTag, addTaglist, dellTag } from "../store/articleReduser";
 
 const EditArticle = () => {
   const token = JSON.parse(localStorage.getItem("token"))?.user.token;
-  const article = useSelector((state) => state.articles.oneArticle);
-  // const article = [
-  //   JSON.parse(localStorage.getItem("oneArticle")).payload.article,
-  // ];
-  const slug = article[0]?.slug;
-  // console.log(article[0]);
+  const article = useSelector((state) => state.articleReduser.fullArticle);
+  const slug = article?.slug;
   const dispatch = useDispatch();
-  const redirect = useSelector((state) => state.articles.redirect);
-  const tags = useSelector((state) => state.articles.tag);
-  const tagsList = useSelector((state) => state.articles.tagList);
-  // console.log(tagsList);
+  const redirect = useSelector((state) => state.articleReduser.redirect);
+  const tags = useSelector((state) => state.articleReduser.tag);
+  const tagsList = useSelector((state) => state.articleReduser.tagList);
 
   function delTag(ind) {
     const result = tagsList.filter((el, index) => {
@@ -34,7 +29,6 @@ const EditArticle = () => {
           type="button"
           onClick={() => {
             delTag(index);
-            // console.log(index);
           }}
         >
           Delete
@@ -42,7 +36,7 @@ const EditArticle = () => {
       </div>
     ));
 
-  const { handleSubmit, register, reset } = useForm({
+  const { handleSubmit, register } = useForm({
     mode: "onBlur",
   });
 
@@ -75,7 +69,7 @@ const EditArticle = () => {
     }
   }
   if (redirect) {
-    return <Redirect to="/articlesList" />;
+    return <Navigate replace to="/:page" />;
   }
   return (
     <>
@@ -88,7 +82,7 @@ const EditArticle = () => {
               <input
                 className="input-title"
                 // placeholder="Title"
-                defaultValue={article[0]?.title}
+                defaultValue={article?.title}
                 {...register("title")}
               />
             </label>
@@ -98,7 +92,7 @@ const EditArticle = () => {
                 className="input-short-description"
                 // placeholder="Short description"
                 {...register("description")}
-                defaultValue={article[0]?.description}
+                defaultValue={article?.description}
               />
             </label>
             <label>
@@ -107,7 +101,7 @@ const EditArticle = () => {
                 className="input-text"
                 // placeholder="Text"
                 {...register("text")}
-                defaultValue={article[0]?.body}
+                defaultValue={article?.body}
               />
             </label>
           </div>
@@ -140,7 +134,7 @@ const EditArticle = () => {
             </label>
           </div>
           <div className="send-button-container">
-            <button>Send</button>
+            <button style={{ cursor: "pointer" }}>Send</button>
           </div>
         </form>
       </div>

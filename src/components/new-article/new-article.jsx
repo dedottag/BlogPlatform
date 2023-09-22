@@ -1,18 +1,18 @@
 import "./new-article.scss";
 import { useForm } from "react-hook-form";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getRedirect } from "../store/articleReduser";
+import { getRedirect, getEditArticle } from "../store/articleReduser";
 import { addTag, addTaglist, dellTag } from "../store/articleReduser";
 
 const token = JSON.parse(localStorage.getItem("token"))?.user.token;
 
 const NewArticle = () => {
   const dispatch = useDispatch();
-  const redirect = useSelector((state) => state.articles.redirect);
-  const tags = useSelector((state) => state.articles.tag);
-  const tagsList = useSelector((state) => state.articles.tagList);
-  // console.log(tagsList);
+  const redirect = useSelector((state) => state.articleReduser.redirect);
+  const tags = useSelector((state) => state.articleReduser.tag);
+  const tagsList = useSelector((state) => state.articleReduser.tagList);
+
   const { handleSubmit, register, reset } = useForm({
     mode: "onBlur",
   });
@@ -26,21 +26,7 @@ const NewArticle = () => {
         token: token,
       },
     };
-    // console.log(user);
-    // console.log(JSON.stringify(user));
-    fetch("https://blog.kata.academy/api/articles", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    })
-      .then((data) => data.json())
-      // .then((data) => console.log(data))
-      .then(dispatch(getRedirect(true)))
-      .then(() => window.location.reload())
-      .catch((err) => console.log(err));
+    getEditArticle(user).then(dispatch(getRedirect(true)));
     reset();
   };
 
@@ -60,7 +46,6 @@ const NewArticle = () => {
           type="button"
           onClick={() => {
             delTag(index);
-            // console.log(index);
           }}
         >
           Delete
@@ -69,7 +54,7 @@ const NewArticle = () => {
     ));
 
   if (redirect) {
-    return <Redirect to="/articlesList" />;
+    return <Navigate replace to="/:page" />;
   }
   return (
     <div className="new-article-container">
